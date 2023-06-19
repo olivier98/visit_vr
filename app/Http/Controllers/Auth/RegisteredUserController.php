@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\exhibitor;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -13,9 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Role;
-use App\Models\stands;
-use App\Models\Exhibitor;
-use Illuminate\Http\RedirectResponse
+use App\Models\Stands;
 
 class RegisteredUserController extends Controller
 {
@@ -57,7 +56,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
         
-        $exhibitor = Exhibitor::create([
+        $exhibitor = exhibitor::create([
             'full_name' => $data['full_name'],
             'phone' => $data['phone'],
             'email' => $data['email'],
@@ -66,10 +65,7 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id
         ]);
 
-        
 
-        
-        $user = User::query()->where('email', $data['email'])->first();
         $userId = $user->id;
         $nomImage1 = "/p1.png";
         $nomImage2 = "/p2.png";
@@ -113,11 +109,11 @@ class RegisteredUserController extends Controller
             'exhibitor_id' => $exhibitor->id
         ]);
         
-        
-        $role = Role::find(1);
+        $role = config('roles.models.role')::where('name', '=', 'Exhibitor')->first();  //choose the default role upon user creation.
+        $user->attachRole($role);
 
-        $user->roles()->attach($role);
+        Auth::login($user);
 
-        return view('dashboard');
+        return redirect(RouteServiceProvider::HOME);
     }
 }
