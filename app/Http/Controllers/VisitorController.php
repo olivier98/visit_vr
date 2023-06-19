@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Visitor;
+use App\Models\visitor;
 use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class VisitorController extends Controller
@@ -13,8 +14,6 @@ class VisitorController extends Controller
     public function store(Request $request)
     {
         
-        
-
         $data = $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
@@ -35,7 +34,7 @@ class VisitorController extends Controller
             'password' => Hash::make($request->password),
         ]);
         
-        $visitor = Visitor::create([
+        $visitor = visitor::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -46,13 +45,10 @@ class VisitorController extends Controller
             'user_id' => $user->id
         ]);
 
-        // $user = User::query()->where('email', $data['email'])->first();
-        // $role = Role::find(2);
-
-        // $user->roles()->attach($role);
-
         $role = config('roles.models.role')::where('name', '=', 'Visitor')->first();  //choose the default role upon user creation.
         $user->attachRole($role);
+
+        Auth::login($user);
 
         return redirect()->route('home');
     

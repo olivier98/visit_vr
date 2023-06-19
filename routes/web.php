@@ -52,7 +52,7 @@ Route::middleware('auth', 'role:exhibitor')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth', 'role:visitor,exhibitor')->group(function () {
+Route::middleware('auth', 'role:visitor')->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 });
 
