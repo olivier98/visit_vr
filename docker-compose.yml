@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+  # Service de base de donnée mysql
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: showroom_db
+      MYSQL_USER: ecoleit
+      MYSQL_PASSWORD: root
+    restart: always
+    volumes:
+      - db_volume_ladg:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+# service phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on: 
+      - db
+    links:
+      - db
+    ports:
+      - 8001:80
+    environment:
+      MYSQL_USER: ecoleit
+      MYSQL_PASSWORD: root
+
+# my db_volume
+volumes:
+  db_volume_ladg:
